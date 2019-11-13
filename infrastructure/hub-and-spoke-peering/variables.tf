@@ -27,30 +27,6 @@ variable "spoke_2_project_id" {
   type        = string
 }
 
-variable "spoke_to_spoke_route_advertisement" {
-  description = "Use custom route advertisement in hub routers to advertise all spoke subnets."
-  type        = bool
-  default     = true
-}
-
-variable "hub_bgp_asn" {
-  description = "Hub BGP ASN."
-  type        = number
-  default     = 64515
-}
-
-variable "spoke_1_bgp_asn" {
-  description = "Spoke 1 BGP ASN."
-  type        = number
-  default     = 64516
-}
-
-variable "spoke_2_bgp_asn" {
-  description = "Spoke 2 BGP ASN."
-  type        = number
-  default     = 64517
-}
-
 variable "hub_subnets" {
   description = "Hub VPC subnets configuration."
   type = list(object({

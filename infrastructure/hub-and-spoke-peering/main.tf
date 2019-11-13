@@ -28,7 +28,7 @@ locals {
 
 module "vpc-hub" {
   source  = "terraform-google-modules/network/google"
-  version = "~> 1.4.3"
+  version = "~> 1.5.0"
 
   project_id   = var.hub_project_id
   network_name = "hub-network"
@@ -38,7 +38,7 @@ module "vpc-hub" {
 
 module "vpc-spoke-1" {
   source  = "terraform-google-modules/network/google"
-  version = "~> 1.4.3"
+  version = "~> 1.5.0"
 
   project_id   = var.spoke_1_project_id
   network_name = "spoke-1-network"
@@ -48,7 +48,7 @@ module "vpc-spoke-1" {
 
 module "vpc-spoke-2" {
   source  = "terraform-google-modules/network/google"
-  version = "~> 1.4.3"
+  version = "~> 1.5.0"
 
   project_id   = var.spoke_2_project_id
   network_name = "spoke-2-network"
@@ -61,17 +61,25 @@ module "vpc-spoke-2" {
 ##############################################################
 
 module "hub-to-spoke-1-peering" {
-  source = "../../modules/network-peering"
+  source  = "terraform-google-modules/network/google//modules/network-peering"
+  version = "~> 1.5.0"
 
-  network = module.vpc-hub.network_self_link
-  peer_network = module.vpc-spoke-1.network_self_link
+  local_network              = module.vpc-hub.network_self_link
+  peer_network               = module.vpc-spoke-1.network_self_link
+  export_local_custom_routes = true
+  export_peer_custom_routes  = false
 }
 
 module "hub-to-spoke-2-peering" {
-  source = "../../modules/network-peering"
-  
-  network = module.hub-to-spoke-1-peering.network_peering.network
-  peer_network = module.vpc-spoke-2.network_self_link
+  source  = "terraform-google-modules/network/google//modules/network-peering"
+  version = "~> 1.5.0"
+
+  local_network              = module.vpc-hub.network_self_link
+  peer_network               = module.vpc-spoke-2.network_self_link
+  export_local_custom_routes = true
+  export_peer_custom_routes  = false
+
+  module_depends_on = [module.hub-to-spoke-1-peering.complete]
 }
 
 ##############################################################
